@@ -26,5 +26,26 @@ module Mastermind
       end
     end
 
+    context '#key_checker' do
+      xit "return key if the key is valid" do
+        game = Game.new(human: Player.new)
+        expect(game.key_checker).to eq("1234")
+      end
+    end
+    
+    context '#indicato_change' do
+      it "Returns + if the numbers are the same index and - if the number is not the same index but same number" do
+        game = Game.new(human: Player.new(name: "Ricardo", code: "4324"))
+        game.change_key("3442")
+        expect(game.indicator_change).to eq("----")
+      end
+
+      it "Returns + if the numbers are the same index and - if the number is not the same index but same number" do
+        game = Game.new(human: Player.new(name: "Ricardo", code: "3442"))
+        game.change_key("3442")
+        expect(game.indicator_change).to eq("++++")
+      end
+    end
+
   end
 end
