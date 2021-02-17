@@ -14,7 +14,7 @@ module Mastermind
     private
 
     def default_code
-      new_code = Rubystats::NormalDistribution.new(6, 1)
+      new_code = Rubystats::NormalDistribution.new(5, 1)
       sample = 4.times.map { new_code.rng.round }
       sample = sample.join('')
       return sample

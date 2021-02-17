@@ -8,16 +8,11 @@ module Mastermind
 
     def initialize (input = {})
       @name = input.fetch(:name, "Player")
-      @code = input.fetch(:code, Code.new.num)
+      @code = input.fetch(:code, '')
     end
 
     def randomize_code
       @code = gen_code
-    end
-
-    def guess (num_set)
-      @code = num_set
-      @code
     end
 
     private 

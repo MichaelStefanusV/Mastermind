@@ -17,6 +17,8 @@ module Mastermind
         pc_mode
       end
     end
+    
+    private
 
     def indicator_change
       arr_identical = check_identical_index(@key, @human.code)
@@ -29,21 +31,19 @@ module Mastermind
     end
 
     def change_key(code)
-      set_key(code)
-      key_checker
+      changed = key_checker(code)
+      set_key(changed)
     end
 
-    private 
       
-    def key_checker
-      truth = is_valid?(@key)
+    def key_checker(key)
+      truth = is_valid?(key)
       if truth
-        return @key
+        return key
       else
         puts "Set a valid key"
         code = gets.chomp
-        set_key(code)
-        key_checker
+        key_checker(code)
       end
     end
 
@@ -56,7 +56,6 @@ module Mastermind
           result << idx
         end
       end
-      p result
       return result
     end
 
@@ -64,10 +63,8 @@ module Mastermind
       result = ''
       temp_bool = Array.new(4) {false}
       arr_iden.each do |elem|
-        p elem
         temp_bool[elem] = true 
       end
-      p temp_bool
       temp_bool_guess = Array.new(4) {false}
       temp_arr = code_to_break.split('')
       temp_guess = code_guess.split('')
@@ -84,10 +81,13 @@ module Mastermind
       end
       return result
     end
- 
 
     def is_win?
       @code == @human.code
+    end
+
+    def lose
+      puts "Better luck next time. YOU LOST!!!"
     end
 
     def is_valid? (num_set)
@@ -105,11 +105,37 @@ module Mastermind
       @key = code
     end
 
+    def guess (code)
+      @human.code = code
+    end
+
     def player_mode
+      @key = Code.new.num
+      counter = 0
+      turn = 10
+      turn.times do
+        puts "Please enter your code to break the enemy's code (each number between 1 and 6)"
+        new_code = gets.chomp
+        guess(new_code)
+        puts "\n+ means you have the right number in the right position"
+        puts "- means you have the right number in the wrong position"
+        puts indicator_change
+        if is_win?
+          puts "Congratulation you win!!"
+          break
+        end
+        counter += 1
+        chance = "Remaining chancess are #{turn-counter} times."
+        puts chance
+      end
+      unless is_win?
+        puts "YOU LOST!!"
+        puts "The code is #{@key}"
+      end
     end
 
     def pc_mode
+      return ""
     end
-
   end
 end
