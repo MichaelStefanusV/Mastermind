@@ -83,7 +83,7 @@ module Mastermind
     end
 
     def is_win?
-      @code == @human.code
+      indicator_change == "++++"
     end
 
     def lose
@@ -114,7 +114,7 @@ module Mastermind
       counter = 0
       turn = 10
       turn.times do
-        puts "Please enter your code to break the enemy's code (each number between 1 and 6)"
+        puts "Please enter your code to break the enemy's code (each number ranging from 0 to 6)"
         new_code = gets.chomp
         guess(new_code)
         puts "\n+ means you have the right number in the right position"
@@ -135,7 +135,9 @@ module Mastermind
     end
 
     def pc_mode
-      return ""
+      puts 'Enter your code : '
+      @human.code = gets.chomp
+
     end
   end
 end
