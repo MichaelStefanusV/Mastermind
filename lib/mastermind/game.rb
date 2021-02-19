@@ -7,7 +7,9 @@ module Mastermind
     def initialize(input = {})
       @human = input.fetch(:human, Player.new)
       @key = ''
-      @indicator = ''
+      @possible_code = all_poss_answer
+      @score = 0
+      @possible_pegs = ['+', '++', '+++','++++', '+-', '+--', '+---', '++-', '++--', '+++-', '-', '--', '---', '----']
     end
 
     def choose_mode (game_mode)
@@ -17,17 +19,56 @@ module Mastermind
         pc_mode
       end
     end
-    
-    private
 
-    def indicator_change
-      arr_identical = check_identical_index(@key, @human.code)
+    private
+    
+    def score_counter(key)
+      score_arr = indicator_change(key).split('')
+      len = score_arr.length
+      temp_score = 0
+      if len != 0
+        score_arr.each do |elem|
+          if elem == '+'
+            temp_score += 3
+          else 
+            temp_score += 1
+          end
+        end
+      end
+      return temp_score
+    end
+    
+    def comp_guess
+      guess = ''
+      temp_score = 0
+      @possible_code.each do |elem|
+        temp_score = score_counter(elem)
+        if temp_score > @score
+          @score = temp_score
+          guess = elem
+          return guess
+        end
+      end
+    end
+
+    def all_poss_answer
+      count = 1111
+      arr_poss = Array.new
+      while count != 6667 do 
+        arr_poss << count.to_s
+        count += 1
+      end
+      return arr_poss
+    end
+
+    def indicator_change(key)
+      arr_identical = check_identical_index(key, @human.code)
       len = arr_identical.length
       result = ''
       len.times do 
         result += "+"
       end
-      result + check_non_identical_index(@key, @human.code, arr_identical)
+      result + check_non_identical_index(key, @human.code, arr_identical)
     end
 
     def change_key(code)
@@ -83,7 +124,7 @@ module Mastermind
     end
 
     def is_win?
-      indicator_change == "++++"
+      indicator_change(@key) == "++++"
     end
 
     def lose
@@ -119,7 +160,7 @@ module Mastermind
         guess(new_code)
         puts "\n+ means you have the right number in the right position"
         puts "- means you have the right number in the wrong position"
-        puts indicator_change
+        puts indicator_change(@key)
         if is_win?
           puts "Congratulation you win!!"
           break
@@ -137,7 +178,27 @@ module Mastermind
     def pc_mode
       puts 'Enter your code : '
       @human.code = gets.chomp
-
+      @key = '1122'
+      puts "Computer guess = #{@key}"
+      puts @indicator
+      @score = score_counter(@key)
+      if is_win?
+        puts 'The computer breaks your code. You LOST!!'
+        return 0
+      else
+        9.times do
+          @key = comp_guess
+          puts "add score = #{@score}"
+          puts "Computer guess = #{@key}"
+          puts indicator_change(@key)
+          if is_win?
+             puts 'The computer breaks your code. You LOST!!'
+             return 0
+             break
+          end
+        end 
+      end
+      puts "You win!! The computer cant guess the code"
     end
   end
 end
